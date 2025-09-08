@@ -28,7 +28,7 @@ Este aplicativo permite que você escreva em Markdown em um painel e veja o resu
 
 ```bash
 # 1. Clone o repositório
-git clone [https://github.com/seu-usuario/seu-repositorio.git](https://github.com/seu-usuario/seu-repositorio.git)
+git clone https://github.com/rodineyw/editor-markdown.git
 
 # 2. Instale as dependências
 npm install
