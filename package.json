@@ -1,19 +1,29 @@
 {
   "name": "editor-markdown",
   "version": "1.0.0",
-  "description": "",
+  "description": "Um editor de Markdown simples feito com Electron",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dist": "electron-builder"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "RW Consultoria",
+  "license": "MIT",
   "devDependencies": {
-    "electron": "^38.0.0"
+    "electron": "^38.0.0",
+    "electron-builder": "26.0.20"
   },
   "dependencies": {
     "electron-log": "^5.4.3",
     "marked": "^16.2.1"
+  },
+  "builder": {
+    "appId": "com.rodineyw.editormarkdown",
+    "productName": "Editor Markdown",
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    }
   }
 }
