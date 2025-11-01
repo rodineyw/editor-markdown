@@ -16,7 +16,7 @@ Este aplicativo permite que você escreva em Markdown em um painel e veja o resu
 
 ## 📸 Screenshot
 
-![Screenshot do Editor Markdown](assets/print.png)
+![Screenshot do Editor Markdown](assets/image.png)
 
 ## 🛠️ Tecnologias Utilizadas
 
