@@ -18,12 +18,17 @@
     "electron-log": "^5.4.3",
     "marked": "^16.2.1"
   },
-  "builder": {
+  "build": {
     "appId": "com.rodineyw.editormarkdown",
     "productName": "Editor Markdown",
     "win": {
       "target": "nsis",
       "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true
     }
   }
 }
