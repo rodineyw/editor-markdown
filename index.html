@@ -2,50 +2,148 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Meu Editor de Markdown</title>
+        <title>Editor Markdown</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <!-- Destaque de código -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" integrity="sha512-+YfGf7dzv8s8Q+M+Zf1WCUqW8uF3Q3JHf3x4cVnIYJYgE6k2lC6sYVPlhGmF2Wk1f0PT1oSkK6S2H8fJQ3yQIA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <!-- Fallback web para marked -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js" integrity="sha512-MlQbQyG0m4u+QhUeH9gqEo5u4ZQ0p5c3KcYx0NQkQFhKpBrnQxqP3DkE+uI2kzQ7ZcLJbzf4ZShH8nQSnEo9wRw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <style>
+            :root {
+                --bg: #0f1217;
+                --panel: #141922;
+                --border: #222a35;
+                --text: #e6e9ef;
+                --muted: #a8b0bd;
+                --accent: #3b82f6;
+            }
+            .theme-light {
+                --bg: #f6f7f9;
+                --panel: #ffffff;
+                --border: #e5e7eb;
+                --text: #0b1220;
+                --muted: #4b5563;
+                --accent: #2563eb;
+            }
+            * { box-sizing: border-box; }
+            html, body { height: 100%; }
             body {
                 margin: 0;
                 padding: 0;
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                color: var(--text);
+                background: var(--bg);
+                display: grid;
+                grid-template-rows: 48px 1fr 28px;
+            }
+            /* Toolbar */
+            .toolbar {
                 display: flex;
-                height: 100vh;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 12px;
+                background: var(--panel);
+                border-bottom: 1px solid var(--border);
             }
-
-            .column {
-                flex: 1;
-                overflow-y: auto;
-                padding: 20px;
+            .brand {
+                font-weight: 600;
+                margin-right: auto;
+                letter-spacing: 0.2px;
+            }
+            .btn {
+                border: 1px solid var(--border);
+                background: transparent;
+                color: var(--text);
+                padding: 6px 10px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 13px;
+            }
+            .btn.primary { border-color: var(--accent); color: var(--accent); }
+            .btn:hover { background: rgba(255,255,255,0.04); }
+            .toggle { display: inline-flex; align-items: center; gap: 6px; }
+            /* Editor area */
+            .container {
+                display: grid;
+                grid-template-columns: 1fr 8px 1fr;
                 height: 100%;
-                box-sizing: border-box;
             }
-
-            #markdown-input {
+            .panel {
+                background: var(--panel);
+                overflow: auto;
+            }
+            .divider {
+                background: var(--border);
+                cursor: col-resize;
+            }
+            textarea#markdown-input {
                 width: 100%;
                 height: 100%;
                 border: none;
                 resize: none;
                 font-size: 16px;
                 line-height: 1.6;
-            }
-
-            #markdown-input-focus {
+                padding: 16px;
+                color: var(--text);
+                background: transparent;
                 outline: none;
             }
-
-            #html-output {
-                border-left: 1px solid #ccc;
+            #html-output { padding: 16px; border-left: 1px solid var(--border); }
+            /* Status bar */
+            .statusbar {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 4px 10px;
+                border-top: 1px solid var(--border);
+                color: var(--muted);
+                background: var(--panel);
+                font-size: 12px;
+            }
+            .status-item { opacity: 0.9; }
+            /* Markdown content defaults */
+            #html-output h1, #html-output h2, #html-output h3 { margin-top: 1.2em; }
+            #html-output pre { background: #0b0f14; padding: 12px; border-radius: 8px; overflow: auto; }
+            #html-output code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+            #html-output table { width: 100%; border-collapse: collapse; }
+            #html-output th, #html-output td { border: 1px solid var(--border); padding: 8px; }
+            #html-output blockquote { border-left: 4px solid var(--border); margin: 0; padding-left: 12px; color: var(--muted); }
+            /* Impressão: mostrar apenas o preview */
+            @media print {
+                .toolbar, .statusbar, .container .panel:first-child, .divider { display: none !important; }
+                .container { grid-template-columns: 1fr; }
+                #html-output { border-left: none; }
             }
         </style>
     </head>
     <body>
-        
-        <div class="column">
-            <textarea placeholder="Digite seu Markdown aqui..." id="markdown-input"></textarea>
+        <div class="toolbar">
+            <div class="brand">Editor Markdown</div>
+            <button class="btn" id="btn-open">Abrir</button>
+            <button class="btn" id="btn-save">Salvar</button>
+            <button class="btn" id="btn-export-html">Exportar HTML</button>
+            <button class="btn" id="btn-export-pdf">Exportar PDF</button>
+            <div class="toggle">
+                <label for="theme-toggle">Tema</label>
+                <select id="theme-toggle" class="btn">
+                    <option value="dark">Escuro</option>
+                    <option value="light">Claro</option>
+                </select>
+            </div>
         </div>
-
-        <div class="column" id="html-output"></div>
-
+        <div class="container">
+            <div class="panel">
+                <textarea placeholder="Digite seu Markdown aqui..." id="markdown-input"></textarea>
+            </div>
+            <div class="divider" id="divider"></div>
+            <div class="panel" id="html-output"></div>
+        </div>
+        <div class="statusbar">
+            <div class="status-item" id="status-words">Palavras: 0</div>
+            <div class="status-item" id="status-chars">Caracteres: 0</div>
+            <div class="status-item" id="status-lines">Linhas: 0</div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-fnYwcN4pYqgFfTQy3k1kB1k3sAqg2VQy6kHnQb3kG3Bf2mQ1uV0sQnJQFjXoJ5t6f1kYQm5lP8QbQblJvWwVqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="./renderer.js"></script>
     </body>
 </html>
